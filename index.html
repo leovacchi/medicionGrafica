@@ -61,6 +61,9 @@
       myChart.data.labels = labels;
       myChart.data.datasets[0].data = data;
       myChart.update();
+
+      // Almacena los datos en localStorage
+      localStorage.setItem('barChartData', JSON.stringify({ labels, data }));
     }
 
     // Función para actualizar el gráfico de torta
@@ -71,17 +74,25 @@
       pieChart.data.labels = labels;
       pieChart.data.datasets[0].data = data;
       pieChart.update();
+
+      // Almacena los datos en localStorage
+      localStorage.setItem('pieChartData', JSON.stringify({ labels, data }));
     }
 
     // Configuración inicial del gráfico de barras
     const ctx = document.getElementById('odsChart').getContext('2d');
+    const barChartData = JSON.parse(localStorage.getItem('barChartData')) || {
+      labels: ["ODS 1", "ODS 2", "ODS 3", "ODS 4", "ODS 5"],
+      data: [75, 90, 60, 80, 50]
+    };
+
     const myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ["ODS 1", "ODS 2", "ODS 3", "ODS 4", "ODS 5"],
+        labels: barChartData.labels,
         datasets: [{
           label: 'Progreso de los ODS',
-          data: [75, 90, 60, 80, 50],
+          data: barChartData.data,
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           borderColor: 'rgba(75, 192, 192, 1)',
           borderWidth: 1
@@ -99,12 +110,17 @@
 
     // Configuración inicial del gráfico de torta
     const pieCtx = document.getElementById('odsPieChart').getContext('2d');
+    const pieChartData = JSON.parse(localStorage.getItem('pieChartData')) || {
+      labels: ["ODS 1", "ODS 2", "ODS 3", "ODS 4", "ODS 5"],
+      data: [20, 25, 15, 20, 20]
+    };
+
     const pieChart = new Chart(pieCtx, {
       type: 'pie',
       data: {
-        labels: ["ODS 1", "ODS 2", "ODS 3", "ODS 4", "ODS 5"],
+        labels: pieChartData.labels,
         datasets: [{
-          data: [20, 25, 15, 20, 20],
+          data: pieChartData.data,
           backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(255, 205, 86, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 159, 64, 0.2)', 'rgba(153, 102, 255, 0.2)'],
           borderColor: ['rgba(255, 99, 132, 1)', 'rgba(255, 205, 86, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 159, 64, 1)', 'rgba(153, 102, 255, 1)'],
           borderWidth: 1
