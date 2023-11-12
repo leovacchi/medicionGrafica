@@ -12,11 +12,14 @@
 <body class="bg-light">
   <div class="container mt-5">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <canvas id="odsChart" width="400" height="200"></canvas>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <canvas id="odsPieChart" width="400" height="200"></canvas>
+      </div>
+      <div class="col-md-4">
+        <canvas id="povertyLineChart" width="400" height="200"></canvas>
       </div>
     </div>
 
@@ -50,6 +53,23 @@
         </form>
       </div>
     </div>
+
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <form id="povertyLineForm">
+          <h5>Ingrese datos para el gráfico de línea (Índices de Pobreza de 5 Ciudades):</h5>
+          <div class="mb-3">
+            <label for="cityLabels">Ciudades (separadas por comas):</label>
+            <input type="text" class="form-control" id="cityLabels" required>
+          </div>
+          <div class="mb-3">
+            <label for="povertyIndices">Índices de Pobreza (separados por comas):</label>
+            <input type="text" class="form-control" id="povertyIndices" required>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="updatePovertyLineChart()">Actualizar Gráfico</button>
+        </form>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -77,6 +97,19 @@
 
       // Almacena los datos en localStorage
       localStorage.setItem('pieChartData', JSON.stringify({ labels, data }));
+    }
+
+    // Función para actualizar el gráfico de línea de índices de pobreza
+    function updatePovertyLineChart() {
+      const cityLabels = document.getElementById('cityLabels').value.split(',');
+      const povertyIndices = document.getElementById('povertyIndices').value.split(',').map(Number);
+
+      povertyLineChart.data.labels = cityLabels;
+      povertyLineChart.data.datasets[0].data = povertyIndices;
+      povertyLineChart.update();
+
+      // Almacena los datos en localStorage
+      localStorage.setItem('povertyLineChartData', JSON.stringify({ cityLabels, povertyIndices }));
     }
 
     // Configuración inicial del gráfico de barras
@@ -125,6 +158,34 @@
           borderColor: ['rgba(255, 99, 132, 1)', 'rgba(255, 205, 86, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 159, 64, 1)', 'rgba(153, 102, 255, 1)'],
           borderWidth: 1
         }]
+      }
+    });
+
+    // Configuración inicial del gráfico de línea de índices de pobreza
+    const povertyLineCtx = document.getElementById('povertyLineChart').getContext('2d');
+    const povertyLineChartData = JSON.parse(localStorage.getItem('povertyLineChartData')) || {
+      cityLabels: ["Ciudad 1", "Ciudad 2", "Ciudad 3", "Ciudad 4", "Ciudad 5"],
+      povertyIndices: [30, 40, 20, 50, 10]
+    };
+
+    const povertyLineChart = new Chart(povertyLineCtx, {
+      type: 'line',
+      data: {
+        labels: povertyLineChartData.cityLabels,
+        datasets: [{
+          label: 'Índices de Pobreza',
+          data: povertyLineChartData.povertyIndices,
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 2,
+          fill: false
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
       }
     });
   </script>
